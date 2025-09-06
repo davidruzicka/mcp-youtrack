@@ -106,10 +106,10 @@ class MCPHTTPServer:
                     # Send initial connection event
                     yield f"data: {json.dumps({'type': 'connected', 'message': 'MCP YouTrack Server connected'})}\n\n"
                     
-                    # Keep connection alive
+                    # Keep the connection open until the client disconnects
+                    # The connection will be kept alive by the server's keep-alive settings
                     while True:
-                        await asyncio.sleep(30)  # Send heartbeat every 30 seconds
-                        yield f"data: {json.dumps({'type': 'heartbeat', 'timestamp': asyncio.get_event_loop().time()})}\n\n"
+                        await asyncio.sleep(3600)  # Just to keep the coroutine alive
                         
                 except asyncio.CancelledError:
                     logger.info("SSE connection cancelled")
@@ -134,7 +134,9 @@ class MCPHTTPServer:
             self.app,
             host=self.config.mcp_host,
             port=self.config.mcp_port,
-            log_level=self.config.log_level.lower()
+            log_level=self.config.log_level.lower(),
+            timeout_keep_alive=self.config.http_keep_alive_timeout,
+            timeout_graceful_shutdown=min(10, self.config.http_keep_alive_timeout // 2)  # Graceful shutdown timeout
         )
         
         server = uvicorn.Server(config)

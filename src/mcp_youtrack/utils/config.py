@@ -17,7 +17,7 @@ class Config:
             load_dotenv(env_path)
         
         # YouTrack configuration
-        self.youtrack_url = os.getenv("YOUTRACK_URL", "https://davidruzicka.youtrack.cloud:443/api")
+        self.youtrack_url = os.getenv("YOUTRACK_URL")
         self.youtrack_api_token = os.getenv("YOUTRACK_API_TOKEN")
         
         # MCP transport configuration
@@ -29,11 +29,20 @@ class Config:
         self.log_level = os.getenv("LOG_LEVEL", "INFO")
         self.log_format = os.getenv("LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         
+        # HTTP server configuration
+        self.http_keep_alive_timeout = int(os.getenv("HTTP_KEEP_ALIVE_TIMEOUT", "60"))  # in seconds
+        
         # Validate required configuration
         self._validate_config()
     
     def _validate_config(self):
         """Validate that required configuration is present."""
+        if not self.youtrack_url:
+            raise ValueError(
+                "YOUTRACK_URL environment variable is required. "
+                "Please set it in your .env file or environment."
+            )
+        
         if not self.youtrack_api_token:
             raise ValueError(
                 "YOUTRACK_API_TOKEN environment variable is required. "
