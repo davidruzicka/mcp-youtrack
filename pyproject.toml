@@ -1,0 +1,58 @@
+[project]
+name = "mcp-youtrack"
+version = "0.1.0"
+description = "MCP server for JetBrains YouTrack"
+authors = [
+    {name = "David Ruzicka"}
+]
+readme = "README.md"
+requires-python = "^3.11"
+dependencies = [
+    "fastapi (>=0.116.1,<0.117.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "mcp (>=1.13.1,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-asyncio = "^1.1.0"
+pytest-mock = "^3.14.1"
+black = "^25.1.0"
+isort = "^6.0.1"
+mypy = "^1.17.1"
+pytest-cov = "^6.2.1"
+httpx = "^0.28.1"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+asyncio_mode = "auto"
+pythonpath = ["src"]
+markers = [
+    "integration: mark a test as an integration test."
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
